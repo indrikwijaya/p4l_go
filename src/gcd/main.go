@@ -1,14 +1,26 @@
 package main
 
 import (
-    "fmt"
+    // "fmt"
+    "time"
+    "log"
 )
 
 func main() {
-    x := 378
-    y := 273
-    d := TrivialGCD(x, y)
-    fmt.Println(d)
+    x := 378202873
+    y := 273147834
+
+    start := time.Now()
+    TrivialGCD(x, y)
+    elapsed := time.Since(start)
+    log.Printf("TrivialGCD took  %s", elapsed)
+
+    start2 := time.Now()
+    EuclidGCD(x, y)
+    elapsed2 := time.Since(start2)
+    log.Printf("EuclidGCD took %s", elapsed2)
+
+
 }
 
 /*
@@ -36,6 +48,42 @@ func TrivialGCD(a, b int) int {
 }
 
 // there is an "OR" of 2 statements as well, operator is ||
+// e || f is true if one or both of e and f is true. It's only false if
+// both e and f are false
+
+func AnotherSumEven(n int) int {
+    sum := 0
+
+    for i := 2; i <= n; i++ {
+      // is i even?
+      if i%2 == 0 {
+          sum += i
+        }
+    }
+
+    return sum
+}
+
+/*
+EuclidGCD(a, b)
+  while a not equal to b
+    if a > b
+        a = a - b
+    else // b > a
+        b = b - a
+  return a
+*/
+
+func EuclidGCD(a, b int) int {
+    for a != b {
+        if a > b {
+            a = a - b
+        } else {
+            b = b - a
+        }
+    }
+    return a
+}
 
 func Min2a(a,b int) int {
     if a > b {
