@@ -82,6 +82,8 @@ func main() {
     text := "ATATA"
 
     fmt.Println(strings.Count(text, pattern))
+    // we should write our own function :)
+    fmt.Println(CountPattern(pattern, text))
 
 }
 
@@ -135,10 +137,41 @@ func Complement(dna string) string {
 
 // let's count the no of occurrences of a pattern in a text as a substring
 
-func CountPattern(patter, text string) int {
+func CountPattern(pattern, text string) int {
     count := 0
     k := len(pattern)
     n := len(text)
 
-    // range o
+    // range over all substrings of text, and increment count if we find a match.
+    for i := 0; i < n-k+1; i++ {
+        // does substring of text of length k starting at position i match
+        // pattern?
+        if text[i:i+k] == pattern {
+            count++
+        }
+    }
+    return count
+}
+
+func CountPattern2(pattern, text string) int {
+    hits := StartingIndices(pattern, text)
+    return len(hits)
+}
+
+//StartingIndices finds all starting positions of pattern in text
+func StartingIndices(pattern, text string) []int {
+    positions := make([]int, 0)
+    k := len(pattern)
+    n := len(text)
+
+    // range over all substrings of text, and append to positionsif we find a match.
+    for i := 0; i < n-k+1; i++ {
+        // does substring of text of length k starting at position i match
+        // pattern?
+        if text[i:i+k] == pattern {
+            positions = append(positions, i)
+        }
+    }
+
+    return positions
 }
