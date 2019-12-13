@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"gifhelper"
 )
 
 //G is the gravitational constant in the gravitational force equation.  It is declared as a "global" constant that can be accessed by all functions.
@@ -85,9 +86,32 @@ func main() {
 			panic("Error: Problem reading time argument.")
 	}
 
+	//os.Args[3] is canvas width in pixels
+	canvasWidth, err3 := strconv.Atoi(os.Args[3])
+	if err3 != nil {
+			panic("Error: Problem reading canvas width argument.")
+	}
+
+	// os.Args[4] is frequency (number of generations) with which we draw universes to images.
+
+	frequency, err4 := strconv.Atoi(os.Args[4])
+	if err4 != nil {
+			panic("Error: Problem reading frequency")
+	}
+
 	fmt.Println("Ready to implement gravity simulator!")
 
-	SimulateGravity(jupiterSystem, numGens, time)
+	timePoints := SimulateGravity(jupiterSystem, numGens, time)
 
 	fmt.Println("Simulation runs successfully!")
+
+	images := AnimateSystem(timePoints, canvasWidth, frequency)
+
+	fmt.Println("Images drawn!")
+
+	filename := "JupiterMoons"
+
+	gifhelper.ImagesToGIF(images, filename)
+
+	fmt.Println("Animated GIF. Exiting normally.")
 }
