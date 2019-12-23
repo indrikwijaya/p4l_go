@@ -33,7 +33,7 @@ func main() {
 func UPGMA(mtx DistanceMatrix, speciesNames []string) Tree {
 
       t := InitializeTree(speciesNames)
-      // will create all nodes needed, and not point any node at any node as a child. 
+      // will create all nodes needed, and not point any node at any node as a child.
 
       clusters := t.InitializeClusters()
       //clusters will start out as just the leaves of t (slice of a node pointers)
@@ -70,3 +70,77 @@ func UPGMA(mtx DistanceMatrix, speciesNames []string) Tree {
 
 //FindMinElement takes a DistanceMatrix and returns the row index, column index, and value corresponding to a minimum element.
 //Assumption that col > row
+func FindMinElement(mtx DistanceMatrix) (int, int, float64) {
+    if len(mtx) <= 1 || len(mtx[0]) <= 0 {
+        panic("One row or one column!")
+    }
+
+    // assume that matrix is at least 2 x 2
+    row := 0
+    col := 1
+    minVal := mtx[row][col]
+
+    // range over matrix, and see if we can do better than minVal.
+    for i := 0; i < len(mtx)-1; i++ {
+        // start at column ranging at i + 1
+        for j := i+1; j < len(mtx[i]); j++ {
+            //do we have a winner?
+            if mtx[i][j] < minVal {
+                // update all three variables
+                minVal = mtx[i][j]
+                row = i
+                col = j
+            }
+        }
+    }
+    return row, col, minVal
+}
+//DelRowCol takes a distance matrix and a row/col index and deletes the row and column indicated, returning the resulting matrix
+
+//DelClusters takes a slice of Node pointers along with a row/col index and deletes the clusters in the slice corresponding to these indices.
+//Assume col > row
+
+//AddRowCol takes a DistanceMatrix, a slice of current clusters, and a row/col index (col > row).
+//It returns the matrix corresponding to "gluing" clusters[row] and clusters[col] together and forming a new row/col of the matrix (no deletions yet).
+
+//CountLeaves is a recursive Node function that counts the number of leaves in the tree rooted at the node. It returns 1 at a leaf.
+
+//InitializeClusters is a Tree method that returns a slice of pointers to the leaves of the Tree
+func (t Tree) InitializeClusters() []*Node {
+    numNodes := len(t)
+    numLeaves := (numNodes+1)/2
+
+    clusters := make([]*Node, numLeaves)
+    // clusters[i] should point to the i-th leaf node of t
+    for i := range clusters {
+        clusters[i] = t[i]
+    }
+
+    return clusters
+}
+//InitializeTree takes the n names of our present-day species (leaves) and returns a rooted binary tree with 2n-1 total nodes, where the leaves are the first n and have the associated species names.
+func InitializeTree(speciesNames []string) Tree {
+    numLeaves := len(speciesNames)
+    var t Tree // a Tree is []*Node
+
+    t = make([]*Node, 2*numLeaves-1)
+    // all of these pointers have default value of nil; we need to point them at nodes
+
+    // we should create 2n-1 nodes.
+    for i := range t {
+        var vx Node
+        // let's label the first numLeaves nodes with the appropriate species name.
+        // by default, vx.age = 0.0, and its children are nil.
+        if i < numLeaves {
+            //at a leaf ... let's assign its label.
+            vx.label = speciesNames[i]
+        } else {
+            // let's just give it an unspecific name
+            vx.label = "Ancestor species " + strconv.Itoa(i)
+        }
+        // one thing to do: point t[i] at vx
+        t[i] = &vx
+    }
+
+    return t
+}
